@@ -14,6 +14,12 @@ if __name__ == "__main__" :
     print (tarPOI)
 
 
+    # Setting Competitiveness venue type of experiment targets
+    comp_venu_st = ["Coffee Shop"]
+    comp_venu_mc = ["Fast Food", "Burgers"]
+    comp_venu_dd = ["Coffee Shop", "Donuts", "Breakfast", "CaFA", "Bakery", "Ice Cream"]
+
+
     # find fitness parameter for radius (cause by error of distance calculation)
     r_act = .1
     sideLEN = 0
@@ -39,7 +45,8 @@ if __name__ == "__main__" :
         # [0]: # of check-ins,  [1]: accu poi MAP (seen using function),  [2][3]: center lati & longi
         # filter check-ins = 1
         if int(row[4]) > 1 :
-            poiIMG.append ([int(row[4]), p1_1.accu_checkin(lat_interval, lon_interval, partDEG, poiMAP), row[0], row[1]])
+            poiIMG.append ([int(row[4]), p1_1.accu_checkin(lat_interval, lon_interval, partDEG, poiMAP, row[0], row[1]), row[0], row[1]])
+            #poiIMG.append ([int(row[4]), p1_1.accu_competitive(lat_interval, lon_interval, partDEG, poiMAP, comp_venu_st, row[0], row[1]), row[0], row[1]])
         cnt += 1
 
 

@@ -145,7 +145,7 @@ def find_poi_array_interval (tar_lati, tar_longi, radius, inter_num) :
     Argu : assigned position (latitude, longitude)
     Retrurn : 2D np.array with accumulate checkins
 '''
-def accu_checkin (lat_inte, lon_inte, inter_degree, poi_map) :
+def accu_checkin (lat_inte, lon_inte, inter_degree, poi_map, skip_lat, skip_lon) :
     inter_num = 2**inter_degree
 
     # Initialize poi array
@@ -156,6 +156,11 @@ def accu_checkin (lat_inte, lon_inte, inter_degree, poi_map) :
         y axis => latitude
     '''
     for cnt in range(len(poi_map)) :
+
+        # skip center poi (self)
+        if float(poi_map[cnt][0]) == float(skip_lat) and float(poi_map[cnt][1]) == float(skip_lon) :
+            continue
+
         row = -1
         col = -1
         lat = float (poi_map[cnt][0])
@@ -175,6 +180,54 @@ def accu_checkin (lat_inte, lon_inte, inter_degree, poi_map) :
         if row != -1 and col != -1 :
             accu_arr[row, col] += int(poi_map[cnt][4])
 
+
+    return accu_arr
+
+
+'''
+    Input :
+        [comp_type] : (list) venue type of competitiveness to the target
+                      e.g. "Coffee Shop" to the "Starbucks"
+'''
+def accu_competitive (lat_inte, lon_inte, inter_degree, poi_map, comp_type, skip_lat, skip_lon) :
+    inter_num = 2**inter_degree
+
+    # Initialize poi array
+    accu_arr = np.zeros ([inter_num, inter_num], dtype=np.float32)
+
+    '''
+        x axis => longitude
+        y axis => latitude
+    '''
+
+    for cnt in range(len(poi_map)) :
+
+        #print (skip_lat, '\t', skip_lon)
+        #print (poi_map[cnt][0])
+
+        # skip center poi (self)
+        if float(poi_map[cnt][0]) == float(skip_lat) and float(poi_map[cnt][1]) == float(skip_lon) :
+            continue
+
+        row = -1
+        col = -1
+        lat = float (poi_map[cnt][0])
+        lon = float (poi_map[cnt][1])
+        if lat >= lat_inte[0] :
+            for cntIn in range(len(lat_inte)) :
+                if lat < lat_inte[cntIn] :
+                    col = cntIn-1
+                    break
+
+        if lon >= lon_inte[0] :
+            for cntIn in range(len(lon_inte)) :
+                if lon < lon_inte[cntIn] :
+                    row = cntIn-1
+                    break
+
+        if row != -1 and col != -1 :
+            if poi_map[cnt][2] in comp_type :
+                accu_arr [row, col] += int(poi_map[cnt][4])
 
     return accu_arr
 

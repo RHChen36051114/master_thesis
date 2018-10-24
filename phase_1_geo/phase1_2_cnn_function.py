@@ -10,6 +10,7 @@ import math as m
 def arg_setting (argv) :
     if len(argv) != 2 :
         print ("\nArgument # error\n\n\tUsage  :  python  phase1_2_cnn_function.py  [POI Map File]\n")
+        sys.exit()
     poiTYPE = argv[1].split('_')[1]
     side, poiIMG = readPOIIMG(argv[1])
 
@@ -31,6 +32,11 @@ def readFile (fileName) :
 
 '''
     Read poi img file that generated from phase1_1
+
+    return  :  [ [ (label), [poi map], (latitude), (longitude) ],
+                                      .
+                                      .
+                                      .                           ]
 '''
 def readPOIIMG (fileName) :
     rawdata = readFile (fileName)
@@ -94,6 +100,39 @@ def departTrainTest (poiIMG, side) :
     x_test = np.array(x_test)
     x_test = x_test.reshape(-1, 1, side, side)
     y_test = np.array(y_test)
+
+    return x_train, y_train, x_test, y_test
+
+
+'''
+
+'''
+def departTrainTest_multi (label, poiIMG) :
+
+    num_test = int(len(poiIMG)/10)
+    num_train = len(poiIMG) - num_test
+    ran = sorted (r.sample(range(0, len(poiIMG)), num_test))
+
+    x_train = []
+    x_test = []
+    y_train = []
+    y_test = []
+
+    counter=0
+    for cnt in range(len(label)) :
+        if cnt == ran[counter] :
+            x_test.append (poiIMG[cnt])
+            y_test.append (label[cnt])
+            if counter < len(ran)-1 :
+                counter += 1
+        else :
+            x_train.append (poiIMG[cnt])
+            y_train.append (label[cnt])
+
+    x_train = np.array (x_train)
+    y_train = np.array (y_train)
+    x_test = np.array (x_test)
+    y_test = np.array (y_test)
 
     return x_train, y_train, x_test, y_test
 
